@@ -1,0 +1,115 @@
+{
+  "name": "connected-next-router",
+  "version": "4.0.1",
+  "description": "A Redux binding for Next.js Router",
+  "author": "Daniel Reinoso <danielreinoso1807@gmail.com> (http://danielr18.github.io)",
+  "license": "MIT",
+  "keywords": [
+    "next",
+    "next.js",
+    "next-router",
+    "next-router-redux",
+    "connected-react-router",
+    "react-router-redux"
+  ],
+  "main": "index.js",
+  "module": "es/index.js",
+  "types": "index.d.ts",
+  "files": [
+    "actions.js",
+    "actions.d.ts",
+    "ConnectedRouter.js",
+    "ConnectedRouter.d.ts",
+    "immutable.js",
+    "immutable.d.ts",
+    "index.js",
+    "index.d.ts",
+    "middleware.js",
+    "middleware.d.ts",
+    "patchRouter.js",
+    "patchRouter.d.ts",
+    "reducer.js",
+    "reducer.d.ts",
+    "routerMethods.js",
+    "routerMethods.d.ts",
+    "types.d.ts",
+    "utils",
+    "structure",
+    "es"
+  ],
+  "scripts": {
+    "build": "npm run build:cjs && npm run build:es",
+    "build:cjs": "tsc",
+    "build:es": "tsc --module esnext --outDir out/es",
+    "instrument": "nyc instrument --compact=false src instrumented && tsc -p tsconfig.test.json --module esnext --outDir test-lib && rm -rf instrumented",
+    "clean": "git clean -xdfe node_modules",
+    "type-check": "tsc --noEmit",
+    "lint": "npm run type-check && eslint './src/**/*.{ts,tsx}'",
+    "e2e:dev": "start-test \"next e2e\" 3000 cy:open",
+    "e2e": "next build e2e && start-test \"next start e2e\" 3000 cy:run",
+    "pree2e": "rm -rf .nyc_output coverage ./e2e/.next || true && npm run instrument",
+    "check-coverage-limits": "nyc report --reporter=text-summary --check-coverage --statements 98",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run"
+  },
+  "peerDependencies": {
+    "immutable": ">=3.8.2",
+    "next": ">=10.0.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-redux": ">=7.1.0",
+    "redux": ">=4.0.0"
+  },
+  "devDependencies": {
+    "@cypress/code-coverage": "^3.8.3",
+    "@types/node": "^14.14.7",
+    "@types/react": "^16.9.56",
+    "@types/react-dom": "^16.9.9",
+    "@types/react-redux": "^7.1.11",
+    "@types/webpack": "^4.41.25",
+    "@typescript-eslint/eslint-plugin": "^4.7.0",
+    "@typescript-eslint/parser": "^4.7.0",
+    "cross-env": "^7.0.2",
+    "cypress": "^5.6.0",
+    "eslint": "^7.13.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "immutable": "^3.8.2",
+    "istanbul-lib-coverage": "^3.0.0",
+    "istanbul-lib-instrument": "^4.0.3",
+    "next": "^10.0.1",
+    "next-redux-wrapper": "^6.0.2",
+    "nyc": "^15.1.0",
+    "prop-types": "^15.7.2",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-redux": "^7.2.2",
+    "redux": "^4.0.5",
+    "start-server-and-test": "^1.11.5",
+    "tslib": "^2.0.3",
+    "typescript": "^4.0.5"
+  },
+  "nyc": {
+    "parser-plugins": [
+      "typescript"
+    ],
+    "all": true,
+    "extension": [
+      ".ts"
+    ],
+    "include": [
+      "src"
+    ],
+    "exclude": [
+      "e2e"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/danielr18/connected-next-router.git"
+  },
+  "bugs": {
+    "url": "https://github.com/danielr18/connected-next-router/issues"
+  }
+}
