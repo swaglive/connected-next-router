@@ -39,15 +39,15 @@ export declare type CallRouterMethodPrefetchPayload = {
     };
 };
 export declare type CallRouterMethodAction = CallRouterMethodPushPayload | CallRouterMethodReplacePayload | CallRouterMethodGoPayload | CallRouterMethodPrefetchPayload;
-export declare const push: (url: Url, as?: string | UrlObject | undefined, options?: any) => CallRouterMethodPushPayload;
-export declare const replace: (url: Url, as?: string | UrlObject | undefined, options?: any) => CallRouterMethodReplacePayload;
+export declare const push: (url: Url, as?: Url | undefined, options?: any) => CallRouterMethodPushPayload;
+export declare const replace: (url: Url, as?: Url | undefined, options?: any) => CallRouterMethodReplacePayload;
 export declare const go: (number: number) => CallRouterMethodGoPayload;
 export declare const prefetch: (url: string) => CallRouterMethodPrefetchPayload;
 export declare const goBack: () => CallRouterMethodGoPayload;
 export declare const goForward: () => CallRouterMethodGoPayload;
 export declare const routerActions: {
-    push: (url: Url, as?: string | UrlObject | undefined, options?: any) => CallRouterMethodPushPayload;
-    replace: (url: Url, as?: string | UrlObject | undefined, options?: any) => CallRouterMethodReplacePayload;
+    push: (url: Url, as?: Url | undefined, options?: any) => CallRouterMethodPushPayload;
+    replace: (url: Url, as?: Url | undefined, options?: any) => CallRouterMethodReplacePayload;
     go: (number: number) => CallRouterMethodGoPayload;
     goBack: () => CallRouterMethodGoPayload;
     goForward: () => CallRouterMethodGoPayload;

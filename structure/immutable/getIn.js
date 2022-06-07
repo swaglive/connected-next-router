@@ -8,6 +8,6 @@ var getIn_1 = __importDefault(require("../plain/getIn"));
 var getIn = function (state, path) {
     return immutable_1.Iterable.isIterable(state)
         ? state.getIn(path).toJS()
-        : getIn_1.default(state, path);
+        : (0, getIn_1.default)(state, path);
 };
 exports.default = getIn;

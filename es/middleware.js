@@ -31,7 +31,7 @@ var createRouterMiddleware = function (structure) { return function (middlewareO
                 (_a = Router)[method].apply(_a, args);
             }
             else if (process.env.NODE_ENV === 'development') {
-                throw new Error("Router method \"" + method + "\" for " + payloadMethod + " action does not exist");
+                throw new Error("Router method \"".concat(method, "\" for ").concat(payloadMethod, " action does not exist"));
             }
         }
         else {

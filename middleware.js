@@ -23,7 +23,7 @@ var createRouterMiddleware = function (structure) { return function (middlewareO
         if (Router && !isServer && type !== actions_1.LOCATION_CHANGE) {
             var storeLocation = structure.getIn(store.getState(), [reducerKey, 'location']);
             if (Router.asPath !== storeLocation.href) {
-                next(actions_1.onLocationChanged(locationFromUrl_1.default(Router.asPath)));
+                next((0, actions_1.onLocationChanged)((0, locationFromUrl_1.default)(Router.asPath)));
             }
         }
         if (type === actions_1.CALL_ROUTER_METHOD) {
@@ -36,7 +36,7 @@ var createRouterMiddleware = function (structure) { return function (middlewareO
                 (_a = Router)[method].apply(_a, args);
             }
             else if (process.env.NODE_ENV === 'development') {
-                throw new Error("Router method \"" + method + "\" for " + payloadMethod + " action does not exist");
+                throw new Error("Router method \"".concat(method, "\" for ").concat(payloadMethod, " action does not exist"));
             }
         }
         else {

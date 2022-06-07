@@ -21,7 +21,7 @@ Object.defineProperty(exports, "prefetch", { enumerable: true, get: function () 
 var routerMethods_1 = require("./routerMethods");
 Object.defineProperty(exports, "routerMethods", { enumerable: true, get: function () { return __importDefault(routerMethods_1).default; } });
 var middleware_1 = __importDefault(require("./middleware"));
-exports.initialRouterState = createInitialRouterState_1.default(immutable_1.default);
-exports.routerReducer = reducer_1.default(immutable_1.default);
-exports.ConnectedRouter = ConnectedRouter_1.default(immutable_1.default);
-exports.createRouterMiddleware = middleware_1.default(immutable_1.default);
+exports.initialRouterState = (0, createInitialRouterState_1.default)(immutable_1.default);
+exports.routerReducer = (0, reducer_1.default)(immutable_1.default);
+exports.ConnectedRouter = (0, ConnectedRouter_1.default)(immutable_1.default);
+exports.createRouterMiddleware = (0, middleware_1.default)(immutable_1.default);

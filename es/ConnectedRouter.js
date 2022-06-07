@@ -30,7 +30,7 @@ var createConnectedRouter = function (structure) {
                 var pathnameInHistory = historyLocation.pathname, searchInHistory = historyLocation.search, hashInHistory = historyLocation.hash;
                 var locationMismatch = pathnameInHistory !== pathnameInStore || searchInHistory !== searchInStore || hashInStore !== hashInHistory;
                 if (locationMismatch) {
-                    var as = "" + pathnameInStore + searchInStore + hashInStore;
+                    var as = "".concat(pathnameInStore).concat(searchInStore).concat(hashInStore);
                     inTimeTravelling.current = true;
                     Router.replace(href, as);
                 }

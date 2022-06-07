@@ -7,7 +7,7 @@ var actions_1 = require("./actions");
 var createInitialRouterState_1 = __importDefault(require("./utils/createInitialRouterState"));
 var createRouterReducer = function (structure) {
     var merge = structure.merge;
-    var initialRouterState = createInitialRouterState_1.default(structure);
+    var initialRouterState = (0, createInitialRouterState_1.default)(structure);
     var initialState = initialRouterState();
     return function routerReducer(state, action) {
         if (state === void 0) { state = initialState; }

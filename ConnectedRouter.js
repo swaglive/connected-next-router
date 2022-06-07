@@ -33,28 +33,28 @@ var createConnectedRouter = function (structure) {
     var ConnectedRouter = function (props) {
         var Router = props.Router || router_1.default;
         var _a = props.reducerKey, reducerKey = _a === void 0 ? 'router' : _a;
-        var store = react_redux_1.useStore();
-        var ongoingRouteChanges = react_1.useRef(0);
-        var isTimeTravelEnabled = react_1.useRef(true);
-        var inTimeTravelling = react_1.useRef(false);
+        var store = (0, react_redux_1.useStore)();
+        var ongoingRouteChanges = (0, react_1.useRef)(0);
+        var isTimeTravelEnabled = (0, react_1.useRef)(true);
+        var inTimeTravelling = (0, react_1.useRef)(false);
         function trackRouteComplete() {
             isTimeTravelEnabled.current = --ongoingRouteChanges.current <= 0;
         }
         function trackRouteStart() {
             isTimeTravelEnabled.current = ++ongoingRouteChanges.current <= 0;
         }
-        react_1.useEffect(function () {
+        (0, react_1.useEffect)(function () {
             function listenStoreChanges() {
                 if (!isTimeTravelEnabled.current) {
                     return;
                 }
                 var storeLocation = getIn(store.getState(), [reducerKey, 'location']);
                 var pathnameInStore = storeLocation.pathname, searchInStore = storeLocation.search, hashInStore = storeLocation.hash, href = storeLocation.href;
-                var historyLocation = locationFromUrl_1.default(Router.asPath);
+                var historyLocation = (0, locationFromUrl_1.default)(Router.asPath);
                 var pathnameInHistory = historyLocation.pathname, searchInHistory = historyLocation.search, hashInHistory = historyLocation.hash;
                 var locationMismatch = pathnameInHistory !== pathnameInStore || searchInHistory !== searchInStore || hashInStore !== hashInHistory;
                 if (locationMismatch) {
-                    var as = "" + pathnameInStore + searchInStore + hashInStore;
+                    var as = "".concat(pathnameInStore).concat(searchInStore).concat(hashInStore);
                     inTimeTravelling.current = true;
                     Router.replace(href, as);
                 }
@@ -62,13 +62,13 @@ var createConnectedRouter = function (structure) {
             var unsubscribeStore = store.subscribe(listenStoreChanges);
             return unsubscribeStore;
         }, [Router, store, reducerKey]);
-        react_1.useEffect(function () {
+        (0, react_1.useEffect)(function () {
             var unpatchRouter = function () { };
             function onRouteChangeFinish(url) {
                 if (!inTimeTravelling.current) {
                     var storeLocation = getIn(store.getState(), [reducerKey, 'location']);
                     if (url !== storeLocation.href) {
-                        store.dispatch(actions_1.onLocationChanged(locationFromUrl_1.default(url)));
+                        store.dispatch((0, actions_1.onLocationChanged)((0, locationFromUrl_1.default)(url)));
                     }
                 }
                 else {
@@ -77,7 +77,7 @@ var createConnectedRouter = function (structure) {
                 trackRouteComplete();
             }
             Router.ready(function () {
-                unpatchRouter = patchRouter_1.default(Router, store);
+                unpatchRouter = (0, patchRouter_1.default)(Router, store);
                 Router.events.on('routeChangeStart', trackRouteStart);
                 Router.events.on('routeChangeError', trackRouteComplete);
                 Router.events.on('routeChangeComplete', onRouteChangeFinish);

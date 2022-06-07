@@ -1,6 +1,6 @@
 {
   "name": "connected-next-router",
-  "version": "4.0.1",
+  "version": "4.1.1",
   "description": "A Redux binding for Next.js Router",
   "author": "Daniel Reinoso <danielreinoso1807@gmail.com> (http://danielr18.github.io)",
   "license": "MIT",
@@ -13,7 +13,13 @@
     "react-router-redux"
   ],
   "main": "index.js",
-  "module": "es/index.js",
+  "exports": {
+    "node": {
+      "module": "./es/index.js",
+      "require": "./index.js"
+    },
+    "default": "./es/index.js"
+  },
   "types": "index.d.ts",
   "files": [
     "actions.js",
@@ -54,11 +60,10 @@
   },
   "peerDependencies": {
     "immutable": ">=3.8.2",
-    "next": ">=10.0.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-redux": ">=7.1.0",
-    "redux": ">=4.0.0"
+    "next": "^10.0.0 || ^11.0.0 || ^12.0.0",
+    "react": "^16.8.0 || ^17.0.0",
+    "react-redux": "^7.1.0",
+    "redux": "^3.6.0 || ^4.0.0"
   },
   "devDependencies": {
     "@cypress/code-coverage": "^3.8.3",
@@ -78,7 +83,7 @@
     "immutable": "^3.8.2",
     "istanbul-lib-coverage": "^3.0.0",
     "istanbul-lib-instrument": "^4.0.3",
-    "next": "^10.0.1",
+    "next": "^12.0.0",
     "next-redux-wrapper": "^6.0.2",
     "nyc": "^15.1.0",
     "prop-types": "^15.7.2",
@@ -87,8 +92,8 @@
     "react-redux": "^7.2.2",
     "redux": "^4.0.5",
     "start-server-and-test": "^1.11.5",
-    "tslib": "^2.0.3",
-    "typescript": "^4.0.5"
+    "tslib": "^2.3.1",
+    "typescript": "^4.3.2"
   },
   "nyc": {
     "parser-plugins": [

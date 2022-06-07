@@ -21,7 +21,7 @@ var patchRouter = function (Router, store) {
         return new Promise(function (resolve, reject) {
             react_dom_1.default.unstable_batchedUpdates(function () {
                 unpatchedMethods.set.apply(Router.router, args).then(resolve, reject);
-                store.dispatch(actions_1.onLocationChanged(locationFromUrl_1.default(Router.asPath)));
+                store.dispatch((0, actions_1.onLocationChanged)((0, locationFromUrl_1.default)(Router.asPath)));
             });
         });
     };

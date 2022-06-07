@@ -9,7 +9,7 @@ var createInitialRouterState = function (_a) {
     return function (url) {
         if (url === void 0) { url = '/'; }
         var initialState = {
-            location: locationFromUrl_1.default(url),
+            location: (0, locationFromUrl_1.default)(url),
         };
         return fromJS(initialState);
     };
