@@ -18,7 +18,8 @@
       "module": "./es/index.js",
       "require": "./index.js"
     },
-    "default": "./es/index.js"
+    "default": "./es/index.js",
+    "immutable": "./es/immutable.js"
   },
   "types": "index.d.ts",
   "files": [

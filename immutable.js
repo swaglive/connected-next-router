@@ -8,6 +8,7 @@ var immutable_1 = __importDefault(require("./structure/immutable"));
 var ConnectedRouter_1 = __importDefault(require("./ConnectedRouter"));
 var reducer_1 = __importDefault(require("./reducer"));
 var createInitialRouterState_1 = __importDefault(require("./utils/createInitialRouterState"));
+var middleware_1 = __importDefault(require("./middleware"));
 var actions_1 = require("./actions");
 Object.defineProperty(exports, "LOCATION_CHANGE", { enumerable: true, get: function () { return actions_1.LOCATION_CHANGE; } });
 Object.defineProperty(exports, "CALL_ROUTER_METHOD", { enumerable: true, get: function () { return actions_1.CALL_ROUTER_METHOD; } });
@@ -20,7 +21,6 @@ Object.defineProperty(exports, "goForward", { enumerable: true, get: function ()
 Object.defineProperty(exports, "prefetch", { enumerable: true, get: function () { return actions_1.prefetch; } });
 var routerMethods_1 = require("./routerMethods");
 Object.defineProperty(exports, "routerMethods", { enumerable: true, get: function () { return __importDefault(routerMethods_1).default; } });
-var middleware_1 = __importDefault(require("./middleware"));
 exports.initialRouterState = (0, createInitialRouterState_1.default)(immutable_1.default);
 exports.routerReducer = (0, reducer_1.default)(immutable_1.default);
 exports.ConnectedRouter = (0, ConnectedRouter_1.default)(immutable_1.default);
