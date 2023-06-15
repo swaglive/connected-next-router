@@ -1,15 +1,13 @@
 import React, { useEffect, useRef } from 'react'
 import { useStore } from 'react-redux'
-import NextRouter, { SingletonRouter } from 'next/router'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { onLocationChanged } from './actions'
 import locationFromUrl from './utils/locationFromUrl'
 import { Structure, LocationState } from './types'
-import patchRouter from './patchRouter'
 
 type ConnectedRouterProps = {
   children?: React.ReactNode;
   reducerKey?: string;
-  Router?: SingletonRouter;
 }
 
 const createConnectedRouter = (structure: Structure): React.FC<ConnectedRouterProps> => {
@@ -21,12 +19,14 @@ const createConnectedRouter = (structure: Structure): React.FC<ConnectedRouterPr
    * to update router state in redux store.
    */
   const ConnectedRouter: React.FC<ConnectedRouterProps> = props => {
-    const Router = props.Router || NextRouter
+    const router = useRouter()
+    const pathname = usePathname()
+    const searchParams = useSearchParams()
     const { reducerKey = 'router' } = props
     const store = useStore()
     const ongoingRouteChanges = useRef(0)
     const isTimeTravelEnabled = useRef(true)
-    const inTimeTravelling = useRef(false)
+    const inTimeTraveling = useRef(false)
 
     function trackRouteComplete(): void {
       isTimeTravelEnabled.current = --ongoingRouteChanges.current <= 0
@@ -54,64 +54,55 @@ const createConnectedRouter = (structure: Structure): React.FC<ConnectedRouterPr
           pathname: pathnameInStore,
           search: searchInStore,
           hash: hashInStore,
-          href
         } = storeLocation
         // Extract Router's location
-        const historyLocation = locationFromUrl(Router.asPath)
-        const { pathname: pathnameInHistory, search: searchInHistory, hash: hashInHistory } = historyLocation
-        // If we do time travelling, the location in store is changed but location in Router is not changed
+        const pathnameInHistory = pathname
+        const searchInHistory = `?${searchParams}`
+        const hashInHistory = ''
+        // If we do time traveling, the location in store is changed but location in Router is not changed
         const locationMismatch =
           pathnameInHistory !== pathnameInStore || searchInHistory !== searchInStore || hashInStore !== hashInHistory
 
         if (locationMismatch) {
           const as = `${pathnameInStore}${searchInStore}${hashInStore}`
           // Update Router's location to match store's location
-          inTimeTravelling.current = true
-          Router.replace(href, as)
+          inTimeTraveling.current = true
+          router.replace(as)
         }
       }
       
       const unsubscribeStore = store.subscribe(listenStoreChanges)
       return unsubscribeStore
-    }, [Router, store, reducerKey])
+    }, [router, pathname, searchParams, store, reducerKey])
 
     useEffect(() => {
-      let unpatchRouter = (): void => {}
       function onRouteChangeFinish(url: string): void {
-        // Dispatch onLocationChanged except when we're time travelling
-        if (!inTimeTravelling.current) {
+        // Dispatch onLocationChanged except when we're time traveling
+        if (!inTimeTraveling.current) {
           const storeLocation = getIn(store.getState(), [reducerKey, 'location']) as LocationState
+
           if (url !== storeLocation.href) {
             store.dispatch(onLocationChanged(locationFromUrl(url)))
           }
         } else {
-          inTimeTravelling.current = false
+          inTimeTraveling.current = false
         }
         trackRouteComplete()
       }
 
-      Router.ready(() => {
-        // Router.ready ensures that Router.router is defined
-        // @ts-ignore
-        unpatchRouter = patchRouter(Router, store)
-        Router.events.on('routeChangeStart', trackRouteStart)
-        Router.events.on('routeChangeError', trackRouteComplete)
-        Router.events.on('routeChangeComplete', onRouteChangeFinish)
-        Router.events.on('hashChangeStart', trackRouteStart)
-        Router.events.on('hashChangeComplete', onRouteChangeFinish)
-      })
-
-      return () => {
-        unpatchRouter()
-        Router.events.off('routeChangeStart', trackRouteStart)
-        Router.events.off('routeChangeError', trackRouteComplete)
-        Router.events.off('routeChangeComplete', onRouteChangeFinish)
-        Router.events.off('hashChangeStart', trackRouteStart)
-        Router.events.off('hashChangeComplete', onRouteChangeFinish)
+      try {
+        const url = pathname + '?' + searchParams.toString()
+        trackRouteStart()
+        onRouteChangeFinish(url)
+      }catch(e) {
+        trackRouteComplete()
       }
-    }, [Router, reducerKey, store])
 
-    return React.createElement(React.Fragment, {}, props.children)
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [pathname, searchParams,])
+
+    return <>{props.children}</>
   }
 
   return ConnectedRouter

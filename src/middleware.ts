@@ -1,4 +1,4 @@
-import NextRouter, { SingletonRouter } from 'next/router'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { PUSH, GO, PREFETCH, REPLACE, RouterMethod } from './routerMethods'
 import {
   CALL_ROUTER_METHOD,
@@ -13,7 +13,6 @@ import { LocationState, Structure } from './types'
 
 export type RouterMethodsObject = { [key in RouterMethod]?: string }
 export type RouterMiddlewareOpts = {
-  Router?: SingletonRouter;
   methods?: RouterMethodsObject;
   reducerKey?: string;
 }
@@ -24,7 +23,10 @@ export type RouterMiddlewareOpts = {
  * reducer or any middleware that comes after this one.
  */
 const createRouterMiddleware = (structure: Structure) => (middlewareOpts: RouterMiddlewareOpts = {}): Middleware => {
-  const { Router = NextRouter, methods = {}, reducerKey = 'router' } = middlewareOpts
+  const { methods = {}, reducerKey = 'router' } = middlewareOpts
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
   const routerMethodsArr: RouterMethod[] = [PUSH, PREFETCH, REPLACE]
   const resolvedMethods = routerMethodsArr.reduce(
     (acc: RouterMethodsObject, method: RouterMethod) => {
@@ -41,10 +43,11 @@ const createRouterMiddleware = (structure: Structure) => (middlewareOpts: Router
      * Ensure the Redux router state is synced with Next Router state
      * whenever an action is dispatched.
      */
-    if (Router && !isServer && type !== LOCATION_CHANGE) {
+    if (!isServer && type !== LOCATION_CHANGE) {
       const storeLocation = structure.getIn(store.getState(), [reducerKey, 'location']) as LocationState
-      if (Router.asPath !== storeLocation.href) {
-        next(onLocationChanged(locationFromUrl(Router.asPath)))
+      const url = pathname + '?' + searchParams.toString();
+      if (url !== storeLocation.href) {
+        next(onLocationChanged(locationFromUrl(url)))
       }
     }
 
@@ -52,9 +55,9 @@ const createRouterMiddleware = (structure: Structure) => (middlewareOpts: Router
       const { args, method: payloadMethod } = (action as CallRouterMethodAction).payload
       const method = resolvedMethods[payloadMethod]
       if (method === GO && !isServer && typeof args[0] === 'number') {
-        window.history.go(args[0])
-      } else if (method && Object.prototype.hasOwnProperty.call(Router, method)) {
-        (Router as any)[method](...args)
+        router.forward();
+      } else if (method && Object.prototype.hasOwnProperty.call(router, method)) {
+        (router as any)[method](...args)
       } else if (process.env.NODE_ENV === 'development') {
         throw new Error(`Router method "${method}" for ${payloadMethod} action does not exist`)
       }

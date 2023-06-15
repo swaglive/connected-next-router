@@ -1,5 +1,5 @@
 import { UrlObject } from 'url'
-import { PUSH, REPLACE, GO, PREFETCH } from './routerMethods'
+import { PUSH, REPLACE, GO, BACK, PREFETCH } from './routerMethods'
 import { LocationState, RouterState } from './types'
 
 type Url = UrlObject | string
@@ -49,7 +49,15 @@ export type CallRouterMethodGoPayload = {
   type: typeof CALL_ROUTER_METHOD;
   payload: {
     method: typeof GO;
-    args: [number];
+    args: [];
+  };
+}
+
+export type CallRouterMethodBackPayload = {
+  type: typeof CALL_ROUTER_METHOD;
+  payload: {
+    method: typeof BACK;
+    args: [];
   };
 }
 
@@ -65,6 +73,7 @@ export type CallRouterMethodAction =
   | CallRouterMethodPushPayload
   | CallRouterMethodReplacePayload
   | CallRouterMethodGoPayload
+  | CallRouterMethodBackPayload
   | CallRouterMethodPrefetchPayload
 
 /**
@@ -72,27 +81,35 @@ export type CallRouterMethodAction =
  * The associated routerMiddleware will capture these events before they get to
  * your reducer and reissue them as the matching function on your history.
  */
-export const push = (url: Url, as?: Url, options?: any): CallRouterMethodPushPayload => ({
+export const push = (url: Url, options?: any): CallRouterMethodPushPayload => ({
   type: CALL_ROUTER_METHOD,
   payload: {
     method: PUSH,
-    args: [url, as, options]
+    args: [url, options]
   }
 })
 
-export const replace = (url: Url, as?: Url, options?: any): CallRouterMethodReplacePayload => ({
+export const replace = (url: Url, options?: any): CallRouterMethodReplacePayload => ({
   type: CALL_ROUTER_METHOD,
   payload: {
     method: REPLACE,
-    args: [url, as, options]
+    args: [url, options]
   }
 })
 
-export const go = (number: number): CallRouterMethodGoPayload => ({
+export const go = (): CallRouterMethodGoPayload => ({
   type: CALL_ROUTER_METHOD,
   payload: {
     method: GO,
-    args: [number]
+    args: []
+  }
+})
+
+export const back = (): CallRouterMethodBackPayload => ({
+  type: CALL_ROUTER_METHOD,
+  payload: {
+    method: BACK,
+    args: []
   }
 })
 
@@ -104,7 +121,7 @@ export const prefetch = (url: string): CallRouterMethodPrefetchPayload => ({
   }
 })
 
-export const goBack = (): CallRouterMethodGoPayload => go(-1)
-export const goForward = (): CallRouterMethodGoPayload => go(1)
+export const goBack = (): CallRouterMethodBackPayload => back()
+export const goForward = (): CallRouterMethodGoPayload => go()
 
 export const routerActions = { push, replace, go, goBack, goForward, prefetch }

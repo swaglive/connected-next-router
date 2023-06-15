@@ -8,7 +8,7 @@ module.exports = {
   plugins: ['react', 'react-hooks', '@typescript-eslint'],
   settings: {
     react: {
-      version: '16.8',
+      version: '18.2.0',
     },
   },
   extends: ['eslint:recommended', 'plugin:react/recommended', 'plugin:@typescript-eslint/recommended'],
