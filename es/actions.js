@@ -1,4 +1,4 @@
-import { PUSH, REPLACE, GO, PREFETCH } from './routerMethods';
+import { PUSH, REPLACE, GO, BACK, PREFETCH } from './routerMethods';
 export var LOCATION_CHANGE = '@@router/LOCATION_CHANGE';
 export var onLocationChanged = function (location) { return ({
     type: LOCATION_CHANGE,
@@ -7,25 +7,32 @@ export var onLocationChanged = function (location) { return ({
     }
 }); };
 export var CALL_ROUTER_METHOD = '@@router/CALL_ROUTER_METHOD';
-export var push = function (url, as, options) { return ({
+export var push = function (url, options) { return ({
     type: CALL_ROUTER_METHOD,
     payload: {
         method: PUSH,
-        args: [url, as, options]
+        args: [url, options]
     }
 }); };
-export var replace = function (url, as, options) { return ({
+export var replace = function (url, options) { return ({
     type: CALL_ROUTER_METHOD,
     payload: {
         method: REPLACE,
-        args: [url, as, options]
+        args: [url, options]
     }
 }); };
-export var go = function (number) { return ({
+export var go = function () { return ({
     type: CALL_ROUTER_METHOD,
     payload: {
         method: GO,
-        args: [number]
+        args: []
+    }
+}); };
+export var back = function () { return ({
+    type: CALL_ROUTER_METHOD,
+    payload: {
+        method: BACK,
+        args: []
     }
 }); };
 export var prefetch = function (url) { return ({
@@ -35,6 +42,6 @@ export var prefetch = function (url) { return ({
         args: [url]
     }
 }); };
-export var goBack = function () { return go(-1); };
-export var goForward = function () { return go(1); };
+export var goBack = function () { return back(); };
+export var goForward = function () { return go(); };
 export var routerActions = { push: push, replace: replace, go: go, goBack: goBack, goForward: goForward, prefetch: prefetch };

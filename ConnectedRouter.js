@@ -24,19 +24,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = __importStar(require("react"));
 var react_redux_1 = require("react-redux");
-var router_1 = __importDefault(require("next/router"));
+var navigation_1 = require("next/navigation");
 var actions_1 = require("./actions");
 var locationFromUrl_1 = __importDefault(require("./utils/locationFromUrl"));
-var patchRouter_1 = __importDefault(require("./patchRouter"));
 var createConnectedRouter = function (structure) {
     var getIn = structure.getIn;
     var ConnectedRouter = function (props) {
-        var Router = props.Router || router_1.default;
+        var router = (0, navigation_1.useRouter)();
+        var pathname = (0, navigation_1.usePathname)();
+        var searchParams = (0, navigation_1.useSearchParams)();
         var _a = props.reducerKey, reducerKey = _a === void 0 ? 'router' : _a;
         var store = (0, react_redux_1.useStore)();
         var ongoingRouteChanges = (0, react_1.useRef)(0);
         var isTimeTravelEnabled = (0, react_1.useRef)(true);
-        var inTimeTravelling = (0, react_1.useRef)(false);
+        var inTimeTraveling = (0, react_1.useRef)(false);
         function trackRouteComplete() {
             isTimeTravelEnabled.current = --ongoingRouteChanges.current <= 0;
         }
@@ -49,51 +50,43 @@ var createConnectedRouter = function (structure) {
                     return;
                 }
                 var storeLocation = getIn(store.getState(), [reducerKey, 'location']);
-                var pathnameInStore = storeLocation.pathname, searchInStore = storeLocation.search, hashInStore = storeLocation.hash, href = storeLocation.href;
-                var historyLocation = (0, locationFromUrl_1.default)(Router.asPath);
-                var pathnameInHistory = historyLocation.pathname, searchInHistory = historyLocation.search, hashInHistory = historyLocation.hash;
+                var pathnameInStore = storeLocation.pathname, searchInStore = storeLocation.search, hashInStore = storeLocation.hash;
+                var pathnameInHistory = pathname;
+                var searchInHistory = "?".concat(searchParams);
+                var hashInHistory = '';
                 var locationMismatch = pathnameInHistory !== pathnameInStore || searchInHistory !== searchInStore || hashInStore !== hashInHistory;
                 if (locationMismatch) {
                     var as = "".concat(pathnameInStore).concat(searchInStore).concat(hashInStore);
-                    inTimeTravelling.current = true;
-                    Router.replace(href, as);
+                    inTimeTraveling.current = true;
+                    router.replace(as);
                 }
             }
             var unsubscribeStore = store.subscribe(listenStoreChanges);
             return unsubscribeStore;
-        }, [Router, store, reducerKey]);
+        }, [router, pathname, searchParams, store, reducerKey]);
         (0, react_1.useEffect)(function () {
-            var unpatchRouter = function () { };
             function onRouteChangeFinish(url) {
-                if (!inTimeTravelling.current) {
+                if (!inTimeTraveling.current) {
                     var storeLocation = getIn(store.getState(), [reducerKey, 'location']);
                     if (url !== storeLocation.href) {
                         store.dispatch((0, actions_1.onLocationChanged)((0, locationFromUrl_1.default)(url)));
                     }
                 }
                 else {
-                    inTimeTravelling.current = false;
+                    inTimeTraveling.current = false;
                 }
                 trackRouteComplete();
             }
-            Router.ready(function () {
-                unpatchRouter = (0, patchRouter_1.default)(Router, store);
-                Router.events.on('routeChangeStart', trackRouteStart);
-                Router.events.on('routeChangeError', trackRouteComplete);
-                Router.events.on('routeChangeComplete', onRouteChangeFinish);
-                Router.events.on('hashChangeStart', trackRouteStart);
-                Router.events.on('hashChangeComplete', onRouteChangeFinish);
-            });
-            return function () {
-                unpatchRouter();
-                Router.events.off('routeChangeStart', trackRouteStart);
-                Router.events.off('routeChangeError', trackRouteComplete);
-                Router.events.off('routeChangeComplete', onRouteChangeFinish);
-                Router.events.off('hashChangeStart', trackRouteStart);
-                Router.events.off('hashChangeComplete', onRouteChangeFinish);
-            };
-        }, [Router, reducerKey, store]);
-        return react_1.default.createElement(react_1.default.Fragment, {}, props.children);
+            try {
+                var url = pathname + '?' + searchParams.toString();
+                trackRouteStart();
+                onRouteChangeFinish(url);
+            }
+            catch (e) {
+                trackRouteComplete();
+            }
+        }, [pathname, searchParams,]);
+        return react_1.default.createElement(react_1.default.Fragment, null, props.children);
     };
     return ConnectedRouter;
 };
